@@ -1,8 +1,8 @@
 """
 转换器核心模块 - 实现数字到中文大写的转换
 """
-from typing import List, Tuple
-from .parser import split_number, normalize_number
+from typing import List
+from .parser import split_number
 
 # 数字到中文大写的映射
 CHINESE_DIGITS = {
@@ -69,15 +69,22 @@ def convert_integer(num: int) -> str:
     if num == 0:
         return CHINESE_DIGITS[0]
     
+    result = []
+    num_str = str(num)
+    num_len = len(num_str)
+    
     # 按4位分组处理
-    groups: List[int] = []
+    groups = []
     while num > 0:
         groups.append(num % 10000)
         num //= 10000
     
-    result = []
+    # 处理每个分组
     for i, group in enumerate(groups):
         if group == 0:
+            # 处理全零的组
+            if i < len(groups) - 1 and groups[i+1] > 0:
+                result.insert(0, CHINESE_DIGITS[0])
             continue
         
         # 转换当前组
@@ -89,23 +96,23 @@ def convert_integer(num: int) -> str:
 
 def convert_decimal(jiao: int, fen: int) -> str:
     """
-    转换小数部分（角分）
+    转换小数部分
     
     Args:
-        jiao: 角（0-9）
-        fen: 分（0-9）
+        jiao: 角的数值
+        fen: 分的数值
     
     Returns:
         str: 转换后的中文大写
     """
-    result = []
-    
     if jiao == 0 and fen == 0:
         return "整"
     
+    result = []
+    
     if jiao > 0:
         result.extend([CHINESE_DIGITS[jiao], "角"])
-    elif fen > 0:  # 角为0但分不为0，需要补零
+    elif fen > 0:
         result.append(CHINESE_DIGITS[0])
     
     if fen > 0:
@@ -123,9 +130,6 @@ def convert(number: str) -> str:
     Returns:
         str: 转换后的中文大写金额
     """
-    # 规范化处理
-    number = normalize_number(number)
-    
     # 分离整数和小数部分
     integer_part, decimal_part = split_number(number)
     

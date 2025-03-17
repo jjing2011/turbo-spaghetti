@@ -4,7 +4,7 @@
 from functools import lru_cache
 from typing import Dict, List, Tuple
 from .converter import CHINESE_DIGITS, UNITS, LARGE_UNITS
-from .parser import split_number, normalize_number
+from .parser import split_number
 
 # 预计算常用数字的中文表示（0-9999）
 PRECOMPUTED_NUMBERS: Dict[int, str] = {}
@@ -92,9 +92,6 @@ def convert_decimal_cached(jiao: int, fen: int) -> str:
 
 def convert_optimized(number: str) -> str:
     """优化版的数字转换函数"""
-    # 规范化处理
-    number = normalize_number(number)
-    
     # 分离整数和小数部分
     integer_part, decimal_part = split_number(number)
     
