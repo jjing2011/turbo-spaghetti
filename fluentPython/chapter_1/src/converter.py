@@ -70,8 +70,6 @@ def convert_integer(num: int) -> str:
         return CHINESE_DIGITS[0]
     
     result = []
-    num_str = str(num)
-    num_len = len(num_str)
     
     # 按4位分组处理
     groups = []
